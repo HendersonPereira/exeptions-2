@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import model.exeptions.DomainExeption;
+
 public class Reservation {
 	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -15,7 +17,10 @@ public class Reservation {
 		
 	}
 
-	public Reservation(Integer roomNumber, Date chekIn, Date chekOut) {
+	public Reservation(Integer roomNumber, Date chekIn, Date chekOut)  {
+		if (!chekOut.after(chekIn)) {
+			throw new DomainExeption(" Check-out date must be after check-in date ");
+		}
 		this.roomNumber = roomNumber;
 		ChekIn = chekIn;
 		ChekOut = chekOut;
@@ -41,32 +46,32 @@ public class Reservation {
 		long diff = ChekOut.getTime() - ChekIn.getTime();
 		return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
 	}
-	public String updateDates(Date chekIn , Date checkOut ) {
+	public void updateDates(Date chekIn , Date checkOut ){
 		Date now = new Date();
 		if (chekIn.before(now) || checkOut.before(now)) {
-		return " Reservation dates for update must be future dates";
+		throw new DomainExeption( " Reservation dates for update must be future dates");
 		}
 		if (!checkOut.after(chekIn)) {
-		return	" Check-out date must be after check-in date ";
+		throw new DomainExeption(" Check-out date must be after check-in date ");
 		}
 		
 		this.ChekIn = chekIn;
 		this.ChekOut = checkOut;
-		return null;
+		
 		
 	}
 
 	@Override
 	public String toString() {
-		return "Room"
+		return "Room "
 				+ roomNumber
-				+", Check - in: "
-				+sdf.format(ChekIn)
-				+", check - Out:"
-				+sdf.format(ChekOut)
-				+", "
-				+duration()
-				+"nigths";
+				+ ", Check - in: "
+				+ sdf.format(ChekIn)
+				+ ", check - Out:"
+				+ sdf.format(ChekOut)
+				+ ", "
+				+ duration()
+				+ " nigths";
 	}
 		
 
